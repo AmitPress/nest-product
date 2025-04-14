@@ -22,17 +22,17 @@ const createUniqueIdGenerator = () => {
     const history = new Set<number>();
   
     return (): number => {
-      if (history.size >= 8196) throw new Error('All possible IDs have been used.');
-  
-      let tempId: number;
-      do {
-        tempId = faker.number.int({ min: 1, max: 8196 });
-      } while (history.has(tempId));
-  
-      history.add(tempId);
-      return tempId;
+        if (history.size >= 8196) throw new Error('All possible IDs have been used.');
+
+        let tempId: number;
+        do {
+            tempId = faker.number.int({ min: 1, max: 8196 });
+        } while (history.has(tempId));
+
+        history.add(tempId);
+        return tempId;
     };
-  }; 
+};
 
 @Injectable()
 export class SeederService {
