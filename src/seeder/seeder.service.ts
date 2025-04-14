@@ -34,12 +34,35 @@ const createUniqueIdGenerator = () => {
     };
 };
 
+const nMonthBackDate = (n: number) : Date => {
+    const now = new Date();
+    const smb = now.getMonth() - n;
+    const date_smb = now.setMonth(smb);
+    return new Date(date_smb);
+}
+const getRandomDateFromRange = () => {
+    const history = new Set<Date>();
+  
+    return (from: Date, to: Date): Date => {
+        if (history.size >= 8196) throw new Error('All possible IDs have been used.');
+
+        let tempDate: Date;
+        do {
+            tempDate = faker.date.between({from, to});
+        } while (history.has(tempDate));
+
+        history.add(tempDate);
+        return tempDate;
+    };
+}
+
 @Injectable()
 export class SeederService {
     private users : User[] = []
     private products: Product[] = []
     private orders : Order[] = []
     private genId = createUniqueIdGenerator();
+    private genDate = getRandomDateFromRange();
     constructor(private readonly db: DbService){}
 
     // user does not depend on any other table
@@ -79,11 +102,12 @@ export class SeederService {
     }
     // unlike above two, this one does depend on user
     async populateOrderEntryForeachUser(numberOfOrders: number = 5) {
+        const sixMonthBefore = nMonthBackDate(6);
         for(const user of this.users){
             for(let i = 0; i < numberOfOrders; i+=1){
                 const id = this.genId()
                 const userId = user.id;
-                const createdAt = new Date();
+                const createdAt = this.genDate(sixMonthBefore, new Date());
                 const totalAmount = 0;
                 this.orders.push({id, userId, createdAt, totalAmount})
                 const query = `
