@@ -1,7 +1,8 @@
-import { Controller, Get, Header, Query, StreamableFile } from '@nestjs/common';
+import { Controller, Get, Header, Query, StreamableFile, UseGuards } from '@nestjs/common';
 import { DbService } from 'src/db/db.service';
 import { Workbook } from 'exceljs';
 import { createWriteStream } from 'fs';
+import { JwtAuthGuard } from 'src/user/user.guard';
 @Controller('api')
 export class ApiController {
     constructor(private readonly db : DbService){}
@@ -41,19 +42,20 @@ export class ApiController {
         }
     }
     
+    @UseGuards(JwtAuthGuard)
     @Get("/most-ordered-product-of-each-month")
     async mostOrderedProductOfTheMonth(){
         const query = `
         select distinct on ( year_month )
             to_char(o.created_at, 'YYYY-MM') as year_month,
-            p.username as product,
+            p.pname as product,
             sum(quantity) as sold_unit_quantity
         from order_items oi
             left join orders o
             on oi.order_id = o.id
             left join products p
             on oi.product_id = p.id
-        group by year_month, p.username
+        group by year_month, p.pname
         order by year_month, sold_unit_quantity desc
         `
         const result = await this.db.query<any>(query)
@@ -78,7 +80,7 @@ export class ApiController {
         ]
         const query = `
         select 
-            p.username as Product, 
+            p.pname as Product, 
             p.price as Price
         from order_items oi
             left join orders o

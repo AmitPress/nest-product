@@ -28,6 +28,8 @@ services:
     restart: always
     ports:
       - ${REDIS_PORT}:${REDIS_PORT}
+    networks:
+      - redis_net
   redisinsight:
     image: redis/redisinsight:2.68.0
     env_file: .env
@@ -35,6 +37,22 @@ services:
     ports:
       - ${REDIS_INSIGHT_PORT}:${REDIS_INSIGHT_PORT}
 
+  app:
+    build: .
+    env_file: .env
+    ports:
+      - ${APP_PORT}:${APP_PORT}
+    depends_on:
+      - redis
+      - pg
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - redis_net
 volumes:
   pgdata:
   pgadmin-data:
+
+networks:
+  redis_net:
+    driver: bridge

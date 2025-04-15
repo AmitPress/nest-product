@@ -6,7 +6,7 @@ export class DbService implements OnModuleDestroy{
     private readonly pool: Pool;
     constructor(private config: ConfigService) {
         this.pool = new Pool({
-            host: config.get<string>("DEV_HOST"),
+            host: config.get<string>("PRODUCTION_HOST"),
             port: config.get<number>("PG_PORT"),
             user: config.get<string>("PG_USER"),
             password: config.get<string>("PG_PASS"),

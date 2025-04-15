@@ -1,0 +1,22 @@
+# Get Total Sales For Each Month
+GET http://host.docker.internal:3000/api/monthly-total-sales http/1.1
+Accept: application/json
+
+###
+
+# Sales to users for a particular month
+GET http://127.0.0.1:3000/api/per-month-user-sale?year_month=2024-11 http/1.1
+Accept: application/json
+
+
+###
+
+# Top Product of Every Month By Sales
+GET http://127.0.0.1:3000/api/most-ordered-product-of-each-month http/1.1
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.SmFsZW41M0Bob3RtYWlsLmNvbQ.hwIUT3cjZ_bAyxP222znsKSrHQ4nvZY41tox2OvhIXs
+
+###
+
+# Download the excel report (try it in browser)
+GET http://127.0.0.1:3000/api/download-monthly-sales http/1.1
