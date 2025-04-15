@@ -4,10 +4,11 @@ import { SeederService } from './seeder/seeder.service';
 export class AppService implements OnApplicationBootstrap{
     constructor(private readonly seeder: SeederService){}
     async onApplicationBootstrap() {
-        await this.seeder.populateUsers();
-        await this.seeder.populateProducts();
-        await this.seeder.populateOrderEntryForeachUser();
-        await this.seeder.populateOrderItemsForeachOrder();
-
+        if(await this.seeder.isNotAlreadyPopulated()){
+            await this.seeder.populateUsers();
+            await this.seeder.populateProducts();
+            await this.seeder.populateOrderEntryForeachUser();
+            await this.seeder.populateOrderItemsForeachOrder();
+        }
     }
 }

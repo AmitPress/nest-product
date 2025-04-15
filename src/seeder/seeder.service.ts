@@ -36,7 +36,7 @@ const createUniqueIdGenerator = () => {
 
 const nMonthBackDate = (n: number) : Date => {
     const now = new Date();
-    const smb = now.getMonth() - n;
+    const smb = now.getMonth() - n - 1;
     const date_smb = now.setMonth(smb);
     return new Date(date_smb);
 }
@@ -65,6 +65,15 @@ export class SeederService {
     private genDate = getRandomDateFromRange();
     constructor(private readonly db: DbService){}
 
+
+    async isNotAlreadyPopulated(): Promise<boolean>{
+        const query = `
+        select count(*) as cnt
+        from users
+        `
+        const result = await this.db.query<any>(query);
+        return result.rows[0].cnt == 0
+    }
     // user does not depend on any other table
     async populateUsers(numberOfUsers: number = 10) {
         const ids : number[] = []
